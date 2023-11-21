@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Public/BInteractionComponent.h"
 #include "BBTaskCharacter.generated.h"
 
 
@@ -12,7 +13,9 @@ UCLASS(config=Game)
 class ABBTaskCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+	UPROPERTY(VisibleAnywhere)
+	class UBInteractionComponent* InteractionComponent;
+	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -37,6 +40,9 @@ class ABBTaskCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* InteractAction;
+
 public:
 	ABBTaskCharacter();
 	
@@ -48,6 +54,8 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void CallInteract();
 			
 
 protected:
@@ -63,4 +71,5 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
+
 

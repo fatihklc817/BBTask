@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Public/BInteractionComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,6 +50,8 @@ ABBTaskCharacter::ABBTaskCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	InteractionComponent = CreateDefaultSubobject<UBInteractionComponent>("InteractionComp");
 }
 
 void ABBTaskCharacter::BeginPlay()
@@ -83,6 +86,9 @@ void ABBTaskCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABBTaskCharacter::Look);
+
+		//interact
+		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Triggered,this,&ABBTaskCharacter::CallInteract);
 
 	}
 
@@ -121,6 +127,14 @@ void ABBTaskCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ABBTaskCharacter::CallInteract()
+{
+	if (ensureAlways(InteractionComponent))
+	{
+		InteractionComponent->InteractWithItem();
 	}
 }
 
