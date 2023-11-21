@@ -15,6 +15,12 @@ class ABBTaskCharacter : public ACharacter
 	GENERATED_BODY()
 	UPROPERTY(VisibleAnywhere)
 	class UBInteractionComponent* InteractionComponent;
+
+	UPROPERTY(EditDefaultsOnly,Category="spawn")
+	TSubclassOf<AActor> SpawnObjectClass;
+
+	UPROPERTY()
+	TArray<AActor*> MySpawnedObjectsList;
 	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -43,6 +49,12 @@ class ABBTaskCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* InteractAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SpawnObjectAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* DestroyObjectAction;
+
 public:
 	ABBTaskCharacter();
 	
@@ -56,6 +68,14 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void CallInteract();
+
+	UFUNCTION(Server,Reliable)
+	void SpawnObject();
+
+	UFUNCTION(Server,Reliable)
+	void DestroyObject();
+
+	bool RayFromCamera(FHitResult &HitResult);
 			
 
 protected:

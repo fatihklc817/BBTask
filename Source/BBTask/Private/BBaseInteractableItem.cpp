@@ -10,6 +10,7 @@ ABBaseInteractableItem::ABBaseInteractableItem()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	RootComponent = Mesh;
+	bReplicates = true;
 
 }
 

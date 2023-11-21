@@ -72,6 +72,9 @@ void ABBTaskCharacter::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
+
+
+
 void ABBTaskCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -89,6 +92,10 @@ void ABBTaskCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 		//interact
 		EnhancedInputComponent->BindAction(InteractAction,ETriggerEvent::Triggered,this,&ABBTaskCharacter::CallInteract);
+		//Spawn and destroy Box
+		EnhancedInputComponent->BindAction(SpawnObjectAction,ETriggerEvent::Triggered,this,&ABBTaskCharacter::SpawnObject);
+		EnhancedInputComponent->BindAction(DestroyObjectAction,ETriggerEvent::Triggered,this,&ABBTaskCharacter::DestroyObject);
+		
 
 	}
 
@@ -138,6 +145,54 @@ void ABBTaskCharacter::CallInteract()
 	}
 }
 
+void ABBTaskCharacter::SpawnObject_Implementation()
+{
+	FHitResult HitResult;
+	RayFromCamera(HitResult);
+	
+	AActor* SpawnedObject = GetWorld()->SpawnActor<AActor>(SpawnObjectClass,HitResult.ImpactPoint,FRotator::ZeroRotator);
+	MySpawnedObjectsList.Push(SpawnedObject);
+}
 
+void ABBTaskCharacter::DestroyObject_Implementation()
+{
+	FHitResult HitResult;
+	bool IsHitted = RayFromCamera(HitResult);
+	if (IsHitted)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		for (auto ListObject : MySpawnedObjectsList)
+		{
+			if (HitActor == ListObject)
+			{
+				HitActor->Destroy();
+				return;
+			}
+		}
+	}
+	
+	
+}
+
+bool ABBTaskCharacter::RayFromCamera(FHitResult &HitResult)
+{
+	FVector StartPos = FollowCamera->GetComponentLocation();
+	FRotator Rotation = GetControlRotation();
+	FVector EndPos = StartPos + Rotation.Vector() * 1000;
+	
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+	bool IsHitted = GetWorld()->LineTraceSingleByChannel(HitResult,StartPos,EndPos,ECC_Visibility,params);
+	if (IsHitted)
+	{
+		return true;
+	}
+	else
+	{
+		HitResult.ImpactPoint = EndPos;
+		return false;
+	}
+	
+}
 
 
