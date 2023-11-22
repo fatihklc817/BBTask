@@ -14,9 +14,14 @@ class BBTASK_API ABGenerator : public ABBaseInteractableItem
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere,Category="lights")
+	UPROPERTY(EditAnywhere,Category="lights",Replicated)
 	TArray<class ALight*> LightsList;
 
 	virtual void Interact_Implementation(AActor* InstigatorActor) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION(NetMulticast,Reliable)
+	void OpenLights();
 	
 };

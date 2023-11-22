@@ -22,6 +22,6 @@ class BBTASK_API IInteractInterface
 
 	
 public:
-	UFUNCTION(NetMulticast,Reliable)
+	UFUNCTION(Server,Reliable)
 	virtual void Interact(AActor* InstigatorActor);
 };
